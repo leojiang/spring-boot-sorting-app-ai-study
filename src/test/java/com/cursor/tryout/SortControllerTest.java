@@ -1,21 +1,34 @@
 package com.cursor.tryout;
 
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
-import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
 
-@SpringBootTest
-@AutoConfigureMockMvc
+@WebMvcTest(SortController.class)
 class SortControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @MockBean
+    private SortService sortService;
+
+    @BeforeEach
+    void setUp() {
+        // Set up mock behavior for the sort service
+        int[] testNumbers = {64, 34, 25, 12, 22, 11, 90, 88, 76, 45};
+        int[] sortedNumbers = {11, 12, 22, 25, 34, 45, 64, 76, 88, 90};
+        when(sortService.bubbleSort(any(int[].class))).thenReturn(sortedNumbers);
+    }
 
     @Test
     void testHealthEndpoint() throws Exception {

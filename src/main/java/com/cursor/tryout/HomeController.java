@@ -7,7 +7,7 @@ import org.springframework.web.bind.annotation.RestController;
  * Home controller providing basic information about the application.
  */
 @RestController
-public final class HomeController {
+public class HomeController {
 
     /**
      * Home endpoint providing application information and available endpoints.
@@ -20,6 +20,8 @@ public final class HomeController {
                 + "- GET  /api/sort?numbers=64,34,25,12,22,11,90,88,76,45\n"
                 + "- POST /api/sort\n"
                 + "- GET  /api/health\n"
-                + "- Demo: /index.html";
+                + "- GET  /\n\n"
+                + "The application provides a REST API for sorting arrays "
+                + "using bubble sort algorithm.";
     }
 }

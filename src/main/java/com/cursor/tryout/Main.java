@@ -7,13 +7,13 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
  * Main application class for the Spring Boot sorting application.
  */
 @SpringBootApplication
-public final class Main {
+public class Main {
 
     /**
-     * Private constructor to prevent instantiation.
+     * Public constructor for Spring Boot.
      */
-    private Main() {
-        // Utility class - no instantiation needed
+    public Main() {
+        // Spring Boot will instantiate this class
     }
 
     /**

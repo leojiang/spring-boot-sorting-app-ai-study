@@ -7,7 +7,7 @@ import org.springframework.stereotype.Service;
  * Provides bubble sort implementation for integer arrays.
  */
 @Service
-public final class SortService {
+public class SortService {
 
     /**
      * Sorts an array of integers using bubble sort algorithm.
@@ -28,6 +28,7 @@ public final class SortService {
 
             for (int j = 0; j < n - i - 1; j++) {
                 if (sortedArray[j] > sortedArray[j + 1]) {
+                    // Swap elements
                     final int temp = sortedArray[j];
                     sortedArray[j] = sortedArray[j + 1];
                     sortedArray[j + 1] = temp;
@@ -35,6 +36,7 @@ public final class SortService {
                 }
             }
 
+            // If no swapping occurred, array is sorted
             if (!swapped) {
                 break;
             }
@@ -44,8 +46,8 @@ public final class SortService {
     }
 
     /**
-     * Sorts an array of integers using bubble sort algorithm (in-place).
-     * @param arr the array to sort in-place
+     * Sorts an array in place using bubble sort algorithm.
+     * @param arr the array to sort (will be modified)
      */
     public void bubbleSortInPlace(final int[] arr) {
         if (arr == null || arr.length <= 1) {
@@ -60,6 +62,7 @@ public final class SortService {
 
             for (int j = 0; j < n - i - 1; j++) {
                 if (arr[j] > arr[j + 1]) {
+                    // Swap elements
                     final int temp = arr[j];
                     arr[j] = arr[j + 1];
                     arr[j + 1] = temp;
@@ -67,6 +70,7 @@ public final class SortService {
                 }
             }
 
+            // If no swapping occurred, array is sorted
             if (!swapped) {
                 break;
             }

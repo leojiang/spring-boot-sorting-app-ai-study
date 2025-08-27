@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<!DOCTYPE suppressions PUBLIC
+    "-//Checkstyle//DTD SuppressionFilter Configuration 1.2//EN"
+    "https://checkstyle.org/dtds/suppressions_1_2.dtd">
+
+<suppressions>
+    <!-- Suppress FinalClass rule for Main class since Spring Boot requires it to not be final -->
+    <suppress checks="FinalClass" files="Main.java"/>
+    <!-- Suppress HideUtilityClassConstructor rule for Main class since it's a Spring Boot main class, not a utility class -->
+    <suppress checks="HideUtilityClassConstructor" files="Main.java"/>
+</suppressions>

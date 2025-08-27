@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.server.ResponseStatusException;
 
+import java.util.Arrays;
+
 /**
  * REST controller for sorting operations.
  * Provides endpoints for sorting arrays using bubble sort algorithm.
@@ -22,72 +24,62 @@ import org.springframework.web.server.ResponseStatusException;
 @RestController
 @RequestMapping("/api")
 @Validated
-public final class SortController {
+public class SortController {
 
     /** The sort service for performing sorting operations. */
     private final SortService sortService;
 
     /**
      * Constructor for SortController.
-     * @param service the sort service to use
+     * @param sortServiceParam the sort service to use
      */
-    public SortController(final SortService service) {
-        this.sortService = service;
-    }
-
-    /**
-     * Sorts an array of numbers provided as a query parameter.
-     * @param numbersParam comma-separated string of numbers
-     * @return SortResponse containing original and sorted arrays
-     */
-    @GetMapping("/sort")
-    public SortResponse sortArray(
-            @RequestParam("numbers")
-            @NotEmpty(message = "Query parameter 'numbers' is required")
-            @Pattern(regexp = "^\\s*-?\\d+(\\s*,\\s*-?\\d+)*\\s*$",
-                    message = "Invalid format. Use comma-separated integers")
-            final String numbersParam) {
-        try {
-            final String[] numberStrings = numbersParam.split(",");
-            final int[] numbers = new int[numberStrings.length];
-
-            for (int i = 0; i < numberStrings.length; i++) {
-                numbers[i] = Integer.parseInt(numberStrings[i].trim());
-            }
-
-            final int[] sortedNumbers = sortService.bubbleSort(numbers);
-            return new SortResponse(numbers, sortedNumbers);
-        } catch (NumberFormatException e) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "Invalid number format in query parameter. "
-                            + "Use comma-separated integers.");
-        }
-    }
-
-    /**
-     * Sorts an array of numbers provided in the request body.
-     * @param request the sort request containing numbers to sort
-     * @return SortResponse containing original and sorted arrays
-     */
-    @PostMapping("/sort")
-    public SortResponse sortArrayPost(
-            @Valid @RequestBody final SortRequest request) {
-        final int[] numbers = request.getNumbers();
-        if (numbers == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
-                    "Field 'numbers' is required");
-        }
-        final int[] sortedNumbers = sortService.bubbleSort(numbers);
-        return new SortResponse(numbers, sortedNumbers);
+    public SortController(final SortService sortServiceParam) {
+        this.sortService = sortServiceParam;
     }
 
     /**
      * Health check endpoint.
-     * @return status message
+     * @return health status message
      */
     @GetMapping("/health")
     public String health() {
         return "Sort API is running!";
+    }
+
+    /**
+     * GET endpoint for sorting arrays.
+     * @param numbersParam comma-separated string of numbers
+     * @return SortResponse with original and sorted arrays
+     */
+    @GetMapping("/sort")
+    public SortResponse sortArrayGet(
+            @RequestParam("numbers")
+            @NotEmpty(message = "Parameter 'numbers' must not be empty")
+            @Pattern(regexp = "^\\d+(,\\d+)*$",
+                    message = "Parameter 'numbers' must contain only "
+                            + "comma-separated integers")
+            final String numbersParam) {
+        try {
+            final int[] numbers = Arrays.stream(numbersParam.split(","))
+                    .mapToInt(Integer::parseInt)
+                    .toArray();
+            return new SortResponse(numbers, sortService.bubbleSort(numbers));
+        } catch (NumberFormatException e) {
+            throw new ResponseStatusException(HttpStatus.BAD_REQUEST,
+                    "Invalid number format");
+        }
+    }
+
+    /**
+     * POST endpoint for sorting arrays.
+     * @param request the sort request containing the array to sort
+     * @return SortResponse with original and sorted arrays
+     */
+    @PostMapping("/sort")
+    public SortResponse sortArrayPost(
+            @Valid @RequestBody final SortRequest request) {
+        return new SortResponse(request.getNumbers(),
+                sortService.bubbleSort(request.getNumbers()));
     }
 
     /**
@@ -99,19 +91,8 @@ public final class SortController {
         @Size(min = 1, message = "Field must contain at least one element")
         private int[] numbers;
 
-        /** Default constructor. */
-        public SortRequest() { }
-
         /**
-         * Constructor with numbers.
-         * @param numbersParam the numbers to sort
-         */
-        public SortRequest(final int[] numbersParam) {
-            this.numbers = numbersParam;
-        }
-
-        /**
-         * Gets the numbers array.
+         * Get the numbers array.
          * @return the numbers array
          */
         public int[] getNumbers() {
@@ -119,12 +100,15 @@ public final class SortController {
         }
 
         /**
-         * Sets the numbers array.
+         * Set the numbers array.
          * @param numbersParam the numbers array to set
          */
         public void setNumbers(final int[] numbersParam) {
             this.numbers = numbersParam;
         }
+
+        /** Default constructor. */
+        public SortRequest() { }
     }
 
     /**
@@ -136,11 +120,8 @@ public final class SortController {
         /** The sorted array. */
         private int[] sorted;
 
-        /** Default constructor. */
-        public SortResponse() { }
-
         /**
-         * Constructor with original and sorted arrays.
+         * Constructor for SortResponse.
          * @param originalParam the original array
          * @param sortedParam the sorted array
          */
@@ -151,7 +132,7 @@ public final class SortController {
         }
 
         /**
-         * Gets the original array.
+         * Get the original array.
          * @return the original array
          */
         public int[] getOriginal() {
@@ -159,7 +140,7 @@ public final class SortController {
         }
 
         /**
-         * Sets the original array.
+         * Set the original array.
          * @param originalParam the original array to set
          */
         public void setOriginal(final int[] originalParam) {
@@ -167,7 +148,7 @@ public final class SortController {
         }
 
         /**
-         * Gets the sorted array.
+         * Get the sorted array.
          * @return the sorted array
          */
         public int[] getSorted() {
@@ -175,11 +156,14 @@ public final class SortController {
         }
 
         /**
-         * Sets the sorted array.
+         * Set the sorted array.
          * @param sortedParam the sorted array to set
          */
         public void setSorted(final int[] sortedParam) {
             this.sorted = sortedParam;
         }
+
+        /** Default constructor. */
+        public SortResponse() { }
     }
 }

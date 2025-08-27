@@ -1,13 +1,11 @@
 package com.cursor.tryout;
 
 import org.junit.jupiter.api.Test;
-import org.springframework.boot.test.context.SpringBootTest;
 import static org.junit.jupiter.api.Assertions.*;
 
-@SpringBootTest
 class SortServiceTest {
 
-    private SortService sortService = new SortService();
+    private final SortService sortService = new SortService();
 
     @Test
     void testBubbleSort() {
